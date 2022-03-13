@@ -8,9 +8,10 @@ namespace Jindium;
 
 public class Routes
 {
+    public string JindiumContentPath { get; set; }
     public Dictionary<Route, Func<Context, Task>> RoutesDictionary { get; private set; } = null;
 
-    public void AddStaticRoute(Route route, Func<Context, Task> action)
+    public void AddRoute(Route route, Func<Context, Task> action)
     {
         if (RoutesDictionary.ContainsKey(route))
         {
@@ -26,11 +27,69 @@ public class Routes
 
     public void AddStaticRoute(string path, Method method, Func<Context, Task> action)
     {
-        AddStaticRoute(new Route(path, method), action);
+        AddRoute(new Route(path, method), action);
     }
 
-    public Routes()
+    public void AddContentRoute(string path, string contentPath)
     {
+        contentPath = contentPath.Replace("/", "\\");
+        contentPath = System.IO.Path.GetFullPath(JindiumContentPath + contentPath);
+
+        //Check if contentPath is a directory
+        if (System.IO.Directory.Exists(contentPath))
+        {
+            //Add a route for each file in the directory and subdirectories
+            foreach (string file in System.IO.Directory.GetFileSystemEntries(contentPath, "*", System.IO.SearchOption.AllDirectories))
+            {
+                string fileName = System.IO.Path.GetFileName(file);
+                string filePath = path + "/" + fileName;
+
+                AddRoute(new Route(filePath + "/" + fileName, Method.GET), (ctx) =>
+                {
+                    if (!System.IO.File.Exists(fileName))
+                    {
+                        return ctx.ErrorPage(path + " does not exist.", 405);
+                    }
+
+                    Console.WriteLine("Serving " + fileName);
+
+                    return ctx.Send(StaticResp.GetFileContent(file));
+                });
+            }
+        }
+        else
+        {
+            AddRoute(new Route(path, Method.GET), (ctx) =>
+            {
+                if (!System.IO.File.Exists(contentPath))
+                {
+                    return ctx.ErrorPage(path + " does not exist.", 404);
+                }
+
+                return ctx.Send(StaticResp.GetFileContent(contentPath));
+            });
+        }
+        
+    }
+
+    private void CheckForJindiumContentPath()
+    {
+        //Check if the directory exists
+        if (!System.IO.Directory.Exists(JindiumContentPath))
+        {
+            cText.WriteLine("JindiumContentPath does not exist! (" + JindiumContentPath + ")");
+            cText.WriteLine("Creating JindiumContentPath...");
+
+            System.IO.Directory.CreateDirectory(JindiumContentPath);
+        }
+    }
+
+    public Routes(string contentPath = "JindiumSite")
+    {
+        JindiumContentPath = contentPath;
+
+        CheckForJindiumContentPath();
+
         RoutesDictionary = new Dictionary<Route, Func<Context, Task>>();
     }
 }

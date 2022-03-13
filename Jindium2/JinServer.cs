@@ -38,23 +38,17 @@ public class JinServer
             string path = ctx.Request.Url.AbsolutePath;
             string method = ctx.Request.HttpMethod;
 
-            if (method == "GET")
-            {
-                //Find the route in ServerRoutes using Linq
-                var route = ServerRoutes.RoutesDictionary.FirstOrDefault(x => x.Key.Path == path && x.Key.Method == Method.GET);
+            var route = ServerRoutes.RoutesDictionary.FirstOrDefault(x => x.Key.Path == path && x.Key.Method == Method.GET);
 
-                if (route.Key.Path == path && route.Key.Method == Method.GET)
-                {
-                    await route.Value(context);
-                }
-                else
-                {
-                    await context.ErrorPage("404");
-                }
+            if (route.Key.Path == path && route.Key.Method == Method.GET)
+            {
+                await route.Value(context);
+                cText.WriteLine($"{method} {path}", "REQ", ConsoleColor.Green);
             }
             else
             {
-                await context.Send("Unsupported method!");
+                await context.ErrorPage("This page does not exist.", 404);
+                cText.WriteLine($"{method} {path}", "REQ", ConsoleColor.Red);
             }
 
             context.res.Close();

@@ -13,6 +13,9 @@ class Program
         server.ServerRoutes.AddStaticRoute("/", Method.GET, DefaultRoute);
         server.ServerRoutes.AddStaticRoute("/test", Method.GET, DefaultRoute);
 
+        server.ServerRoutes.AddContentRoute("/jack", "/test.html");
+        server.ServerRoutes.AddContentRoute("/george", "/george");
+
         server.Start();
     }
 
