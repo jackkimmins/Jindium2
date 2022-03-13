@@ -11,9 +11,21 @@ namespace Jindium
     {
         public HttpListenerRequest req { get; set; } = null;
         public HttpListenerResponse res { get; set; } = null;
+        public Replacelets LocalReplacelets { get; private set; }
+
+        private string ApplyReplacelets(string content)
+        {
+            foreach (var replacelet in LocalReplacelets.ReplaceletDictionary)
+            {
+                content = content.Replace(replacelet.Key, replacelet.Value(""));
+            }
+
+            return content;
+        }
 
         public async Task Send(string data, int statusCode = 200, string contentType = "text/html")
         {
+            data = ApplyReplacelets(data);
             await CreateResponse(Encoding.UTF8.GetBytes(data), statusCode, contentType);
         }
 
@@ -61,10 +73,11 @@ namespace Jindium
             await res.OutputStream.WriteAsync(data, 0, data.Length);
         }
 
-        public Context(HttpListenerRequest req, HttpListenerResponse res)
+        public Context(HttpListenerRequest req, HttpListenerResponse res, Replacelets replacelets)
         {
             this.req = req;
             this.res = res;
+            LocalReplacelets = replacelets;
         }
     }
 }

@@ -8,13 +8,19 @@ namespace Jindium;
 
 public class Replacelets
 {
-    public List<Replacelets> replacelets = new List<Replacelets>();
+    public Dictionary<string, Func<string, string>> ReplaceletDictionary { get; private set; } = new Dictionary<string, Func<string, string>>();
 
-    public static void CreateReplacelet(string name, Func<Replacelets, Task> action)
+    public void AddReplacelet(string name, Func<string, string> action)
     {
-        Replacelets replacelet = new Replacelets();
-        replacelet.name = name;
-        replacelet.action = action;
-        replacelets.Add(replacelet);
+        if (ReplaceletDictionary.ContainsKey(name))
+        {
+            if (name != "/")
+                cText.WriteLine("A replacelet with the same name already exists! (" + name + ") Overwriting...");
+
+            ReplaceletDictionary[name] = action;
+            return;
+        }
+
+        ReplaceletDictionary.Add(name, action);
     }
 }

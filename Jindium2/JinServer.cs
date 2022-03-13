@@ -8,7 +8,7 @@ public class JinServer
     private HttpListener listener = new HttpListener();
     public string Address { get; set; }
     public Routes ServerRoutes { get; private set; } = new Routes();
-    public Dictionary<string, Func<Replacelets, Task>> ServerReplacelets { get; private set; } = new Dictionary<string, Func<Replacelets, Task>>();
+    public Replacelets ServerReplacelets { get; private set; } = new Replacelets();
 
     public JinServer(string address, Func<Context, Task> defaultRoute = null)
     {
@@ -33,7 +33,7 @@ public class JinServer
         {
             HttpListenerContext ctx = await listener.GetContextAsync();
 
-            Context context = new Context(ctx.Request, ctx.Response);
+            Context context = new Context(ctx.Request, ctx.Response, ServerReplacelets);
 
             string path = ctx.Request.Url.AbsolutePath;
             string method = ctx.Request.HttpMethod;

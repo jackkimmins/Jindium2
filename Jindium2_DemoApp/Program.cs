@@ -19,12 +19,17 @@ class Program
         server.ServerRoutes.AddContentRoute("/login", "/login.html");
         server.ServerRoutes.AddContentRoute("/george", "/george");
 
+        server.ServerReplacelets.AddReplacelet("HelloWorld", (repl) =>
+        {
+            return "Does this work?";
+        });
+
         server.Start();
     }
 
     static async Task DefaultRoute(Context ctx)
     {
-        await ctx.Send("Hello, world! " + DateTime.Now.ToString());
+        await ctx.Send("Hello, world! HelloWorld " + DateTime.Now.ToString());
     }
 
     static async Task AuthRoute(Context ctx)
