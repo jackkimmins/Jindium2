@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace Jindium
 {
@@ -15,9 +16,14 @@ namespace Jindium
 
         private string ApplyReplacelets(string content)
         {
-            foreach (var replacelet in LocalReplacelets.ReplaceletDictionary)
+            //Search for replacelets in the content using regex
+            //<Name />
+
+            //Replace the replacelet with the result of the replacelet function
+
+            foreach (KeyValuePair<string, Func<string, string>> replacelet in LocalReplacelets.ReplaceletDictionary)
             {
-                content = content.Replace(replacelet.Key, replacelet.Value(""));
+                content = Regex.Replace(content, "<" + replacelet.Key + " />", replacelet.Value(""));
             }
 
             return content;

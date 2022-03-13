@@ -24,12 +24,17 @@ class Program
             return "Does this work?";
         });
 
+        server.ServerReplacelets.AddReplacelet("DateTime", (repl) =>
+        {
+            return DateTime.Now.ToString();
+        });
+
         server.Start();
     }
 
     static async Task DefaultRoute(Context ctx)
     {
-        await ctx.Send("Hello, world! HelloWorld " + DateTime.Now.ToString());
+        await ctx.Send("Hello, world! <HelloWorld /> <DateTime />");
     }
 
     static async Task AuthRoute(Context ctx)
