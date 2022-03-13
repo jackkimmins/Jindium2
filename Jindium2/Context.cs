@@ -22,6 +22,28 @@ namespace Jindium
             await Send(StaticResp.ErrorTemplate("test", statusCode.ToString()), statusCode, "text/html");
         }
 
+        public async Task<Dictionary<string, string>> GetRequestPostData()
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>();
+
+            if (req.HasEntityBody)
+            {
+                byte[] buffer = new byte[req.ContentLength64];
+                await req.InputStream.ReadAsync(buffer, 0, buffer.Length);
+                string body = Encoding.UTF8.GetString(buffer);
+
+                string[] pairs = body.Split('&');
+
+                foreach (string pair in pairs)
+                {
+                    string[] keyValue = pair.Split('=');
+                    data.Add(keyValue[0], keyValue[1]);
+                }
+            }
+
+            return data;
+        }
+
         private Task AddCustomHeaders()
         {
             res.Headers.Add("Server", "Jindium");

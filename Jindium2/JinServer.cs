@@ -38,9 +38,15 @@ public class JinServer
             string path = ctx.Request.Url.AbsolutePath;
             string method = ctx.Request.HttpMethod;
 
-            var route = ServerRoutes.RoutesDictionary.FirstOrDefault(x => x.Key.Path == path && x.Key.Method == Method.GET);
+            if (!Enum.IsDefined(typeof(Method), method))
+            {
+                await context.ErrorPage("Method not allowed", 405);
+                continue;
+            }
 
-            if (route.Key.Path == path && route.Key.Method == Method.GET)
+            var route = ServerRoutes.RoutesDictionary.FirstOrDefault(x => x.Key.Path == path && x.Key.Method == (Method)Enum.Parse(typeof(Method), method));
+
+            if (route.Key.Path == path && route.Key.Method == (Method)Enum.Parse(typeof(Method), method))
             {
                 await route.Value(context);
                 cText.WriteLine($"{method} {path}", "REQ", ConsoleColor.Green);
