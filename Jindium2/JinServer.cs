@@ -15,6 +15,15 @@ public class JinServer
         if (String.IsNullOrEmpty(address)) address = "localhost";
 
         Address = address;
+
+        if (defaultRoute == null)
+        {
+            defaultRoute = (ctx) =>
+            {
+                return ctx.Send(StaticResp.WelcomeTemplate("Jindium"));
+            };
+        }
+
         ServerRoutes.AddStaticRoute("/", Method.GET, defaultRoute);
     }
 
@@ -40,7 +49,7 @@ public class JinServer
                 }
                 else
                 {
-                    await context.Send("404");
+                    await context.ErrorPage("404");
                 }
             }
             else

@@ -8,8 +8,9 @@ class Program
 {
     static void Main()
     {
-        JinServer server = new JinServer("http://localhost:5000/", DefaultRoute);
+        JinServer server = new JinServer("http://localhost:5000/");
 
+        server.ServerRoutes.AddStaticRoute("/", Method.GET, DefaultRoute);
         server.ServerRoutes.AddStaticRoute("/test", Method.GET, DefaultRoute);
 
         server.Start();
@@ -17,6 +18,6 @@ class Program
 
     static async Task DefaultRoute(Context ctx)
     {
-        await ctx.Send("Hello, world!");
+        await ctx.Send("Hello, world! " + DateTime.Now.ToString());
     }
 }

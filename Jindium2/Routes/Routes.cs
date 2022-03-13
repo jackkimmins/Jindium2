@@ -12,10 +12,13 @@ public class Routes
 
     public void AddStaticRoute(Route route, Func<Context, Task> action)
     {
-        //Ensure that the key is not already in the dictionary
         if (RoutesDictionary.ContainsKey(route))
         {
-            throw new Exception("Route already exists!");
+            if (route.Path != "/")
+                cText.WriteLine("A route with the same path and method already exists! (" + route.Path + ") Overwriting...");
+
+            RoutesDictionary[route] = action;
+            return;
         }
 
         RoutesDictionary.Add(route, action);
