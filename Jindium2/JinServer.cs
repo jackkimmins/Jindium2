@@ -6,28 +6,23 @@ namespace Jindium;
 public class JinServer
 {
     private HttpListener listener = new HttpListener();
-    public string Address { get; set; }
+    public string Address { get; private set; }
     public Routes ServerRoutes { get; private set; } = new Routes();
     public Replacelets ServerReplacelets { get; private set; } = new Replacelets();
 
-    public JinServer(string address, Func<Context, Task> defaultRoute = null)
+    public JinServer(string address)
     {
-        if (String.IsNullOrEmpty(address)) address = "localhost";
+        if (String.IsNullOrEmpty(address)) address = "http://localhost:5000/";
 
         Address = address;
 
-        if (defaultRoute == null)
+        ServerRoutes.AddStaticRoute("/", Method.GET, (ctx) =>
         {
-            defaultRoute = (ctx) =>
-            {
-                return ctx.Send(StaticResp.WelcomeTemplate("Jindium"));
-            };
-        }
-
-        ServerRoutes.AddStaticRoute("/", Method.GET, defaultRoute);
+            return ctx.Send(StaticResp.WelcomeTemplate("Jindium"));
+        });
     }
 
-    public async Task HandleIncomingConnections()
+    private async Task HandleIncomingConnections()
     {
         while (true)
         {
@@ -40,7 +35,7 @@ public class JinServer
 
             if (!Enum.IsDefined(typeof(Method), method))
             {
-                await context.ErrorPage("Method not allowed", 405);
+                await context.ErrorPage("HTTP Method is not allowed", 405);
                 continue;
             }
 
