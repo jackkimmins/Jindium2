@@ -18,7 +18,30 @@ namespace Jindium
         {
             foreach (KeyValuePair<string, Func<string, string>> replacelet in LocalReplacelets.ReplaceletDictionary)
             {
-                content = Regex.Replace(content, "<" + replacelet.Key + " />", replacelet.Value(""));
+                Regex replaceletPattern = new Regex("<" + replacelet.Key + "(?=\\s)(?!(?:[^>\"\\']|\"[^\"]*\"|\\'[^\\']*\\')*?(?<=\\s)(?:term|range)\\s*=)(?!\\s*/?>)\\s+(?:\".*?\"|\\'.*?\\'|[^>]*?)+>");
+
+                MatchCollection replaceletMatches = replaceletPattern.Matches(content);
+
+                foreach (Match replaceletMatch in replaceletMatches)
+                {
+                    Console.WriteLine("Found replacelet: " + replaceletMatch.Value);
+
+                    Regex attrPattern = new Regex("(\\w+)=[\"']?((?:.(?![\"']?\\s+(?:\\S+)=|\\s*\\/?[>\"']))+.)[\"']?");
+
+                    MatchCollection attrMatches = attrPattern.Matches(content);
+
+                    Dictionary<string, string> ReplaceletArgs = new Dictionary<string, string>();
+
+                    foreach (Match match in attrMatches)
+                    {
+                        ReplaceletArgs.Add(match.Groups[1].Value, match.Groups[2].Value);
+
+                        Console.WriteLine(match.Value + " and the key is " + replacelet.Key);
+                    }
+
+                    //Apply the replacelet
+                    content = content.Replace(replaceletMatch.Value, replacelet.Value(""));
+                }
             }
 
             return content;

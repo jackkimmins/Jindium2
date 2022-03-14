@@ -34,7 +34,7 @@ class Program
 
     static async Task DefaultRoute(Context ctx)
     {
-        await ctx.Send("Hello, world! <HelloWorld /> <DateTime />");
+        await ctx.Send("Hello, world! <HelloWorld test=\"jack\"></REPL> <DateTime null></REPL>");
     }
 
     static async Task AuthRoute(Context ctx)
