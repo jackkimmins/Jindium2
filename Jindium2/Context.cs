@@ -10,17 +10,12 @@ namespace Jindium
 {
     public class Context
     {
-        public HttpListenerRequest req { get; set; } = null;
-        public HttpListenerResponse res { get; set; } = null;
+        public HttpListenerRequest req { get; private set; } = null;
+        public HttpListenerResponse res { get; private set; } = null;
         public Replacelets LocalReplacelets { get; private set; }
 
         private string ApplyReplacelets(string content)
         {
-            //Search for replacelets in the content using regex
-            //<Name />
-
-            //Replace the replacelet with the result of the replacelet function
-
             foreach (KeyValuePair<string, Func<string, string>> replacelet in LocalReplacelets.ReplaceletDictionary)
             {
                 content = Regex.Replace(content, "<" + replacelet.Key + " />", replacelet.Value(""));
@@ -65,7 +60,6 @@ namespace Jindium
         private Task AddCustomHeaders()
         {
             res.Headers.Add("Server", "Jindium");
-
             return Task.CompletedTask;
         }
 
@@ -74,7 +68,7 @@ namespace Jindium
             res.StatusCode = statusCode;
             res.ContentType = contentType;
 
-            AddCustomHeaders();
+            await AddCustomHeaders();
 
             await res.OutputStream.WriteAsync(data, 0, data.Length);
         }
