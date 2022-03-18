@@ -13,6 +13,18 @@ class Program
         server.ServerRoutes.AddStaticRoute("/", Method.GET, DefaultRoute);
         server.ServerRoutes.AddStaticRoute("/test", Method.GET, DefaultRoute);
 
+        server.ServerRoutes.AddStaticRoute("/test", Method.GET, async (ctx) => {
+            if (ctx.Session.ContainsKey("demo"))
+            {
+                await ctx.Send("Session found: " + ctx.Session["demo"]);
+                return;
+            }
+
+            ctx.Session.Add("demo", "Hello world!");
+
+            await ctx.Send("This is a session demo page.");
+        });
+
         server.ServerRoutes.AddStaticRoute("/auth", Method.POST, AuthRoute);
 
         server.ServerRoutes.AddContentRoute("/jack", "/test.html");

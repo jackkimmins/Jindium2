@@ -13,6 +13,7 @@ namespace Jindium
         public HttpListenerRequest req { get; private set; } = null;
         public HttpListenerResponse res { get; private set; } = null;
         public Replacelets LocalReplacelets { get; private set; }
+        public SessionData Session { get; set; }
 
         private string ApplyReplacelets(string content)
         {

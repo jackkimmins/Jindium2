@@ -7,33 +7,19 @@ using System.Threading.Tasks;
 
 namespace Jindium
 {
-    public class SessionData : IEnumerable<Dictionary<string, string>>
+    public class SessionData : Dictionary<string, string>
     {
-        private readonly List<Dictionary<string, string>> _rows = new List<Dictionary<string, string>>();
+        private readonly Dictionary<string, string> _rows = new Dictionary<string, string>();
 
-        public void Add(Dictionary<string, string> href)
+        public void Add(KeyValuePair<string, string> row)
         {
-            _rows.Add(href);
-        }
-
-        public void AddRange(IEnumerable<Dictionary<string, string>> hrefs)
-        {
-            _rows.AddRange(hrefs);
-        }
-
-        public IEnumerator<Dictionary<string, string>> GetEnumerator()
-        {
-            return _rows.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return ((IEnumerable)_rows).GetEnumerator();
+            _rows.Add(row.Key, row.Value);
         }
     }
 
     public class Sessions
     {
+        public bool SessionsActive { get; set; } = true;
         public Dictionary<string, SessionData> SessionsData { get; private set; } = new Dictionary<string, SessionData>();
 
         private string GenerateSessionId()
@@ -41,7 +27,7 @@ namespace Jindium
             return Guid.NewGuid().ToString();
         }
 
-        public string Add(Dictionary<string, string> href)
+        public string StartSession()
         {
             string sessionId = GenerateSessionId();
 
@@ -50,9 +36,17 @@ namespace Jindium
                 SessionsData.Add(sessionId, new SessionData());
             }
 
-            SessionsData[sessionId].Add(href);
-
             return sessionId;
+        }
+
+        public SessionData GetSession(string sessionId)
+        {
+            if (SessionsData.ContainsKey(sessionId))
+            {
+                return SessionsData[sessionId];
+            }
+
+            return new SessionData();
         }
     }
 }

@@ -9,6 +9,7 @@ public class JinServer
     public string Address { get; private set; }
     public Routes ServerRoutes { get; private set; } = new Routes();
     public Replacelets ServerReplacelets { get; private set; } = new Replacelets();
+    public Sessions Sessions { get; set; } = new Sessions();
 
     public JinServer(string address)
     {
@@ -32,6 +33,31 @@ public class JinServer
 
             string path = ctx.Request.Url.AbsolutePath;
             string method = ctx.Request.HttpMethod;
+
+            if (Sessions.SessionsActive)
+            {
+                //Get session id from the SESSION cookie
+                string? sessionId = ctx.Request.Cookies.Where(c => c.Name == "SESSION").FirstOrDefault()?.Value;
+
+                if (sessionId == null)
+                {
+                    //No session cookie found, create a new session
+                    sessionId = Sessions.StartSession();
+                    ctx.Response.Cookies.Add(new Cookie("SESSION", sessionId));
+                }
+                else
+                {
+                    //Session cookie found, check if session exists
+                    if (!Sessions.SessionsData.ContainsKey(sessionId))
+                    {
+                        //Session does not exist, create a new session
+                        sessionId = Sessions.StartSession();
+                        ctx.Response.Cookies.Add(new Cookie("SESSION", sessionId));
+                    }
+                }
+
+                context.Session = Sessions.GetSession(sessionId);
+            }
 
             if (!Enum.IsDefined(typeof(Method), method))
             {
