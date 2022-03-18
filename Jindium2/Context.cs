@@ -21,9 +21,11 @@ namespace Jindium
             {
                 foreach (Match replaceletMatch in new Regex("<" + replacelet.Key + "(?=\\s)(?!(?:[^>\"\\']|\"[^\"]*\"|\\'[^\\']*\\')*?(?<=\\s)(?:term|range)\\s*=)(?!\\s*/?>)\\s+(?:\".*?\"|\\'.*?\\'|[^>]*?)+>").Matches(content))
                 {
+                    Console.WriteLine("Found replacelet: " + replaceletMatch.Value);
+
                     Dictionary<string, string> ReplaceletArgs = new Dictionary<string, string>();
 
-                    foreach (Match match in new Regex("(\\w+)=[\"']?((?:.(?![\"']?\\s+(?:\\S+)=|\\s*\\/?[>\"']))+.)[\"']?").Matches(content))
+                    foreach (Match match in new Regex("(\\w+)=[\"']?((?:.(?![\"']?\\s+(?:\\S+)=|\\s*\\/?[>\"']))+.)[\"']?").Matches(replaceletMatch.Value))
                     {
                         ReplaceletArgs.Add(match.Groups[1].Value, match.Groups[2].Value);
                     }
@@ -66,6 +68,21 @@ namespace Jindium
             }
 
             return data;
+        }
+
+        public async Task<bool> IsPostKeySet(params string[] keys)
+        {
+            Dictionary<string, string> data = await GetRequestPostData();
+
+            foreach (string key in keys)
+            {
+                if (!data.ContainsKey(key))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private Task AddCustomHeaders()

@@ -4,6 +4,26 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Authors>Jack Kimmins</Authors>
+    <Product>Jindium</Product>
+    <PackageId>Jindium</PackageId>
+    <RepositoryUrl>https://github.com/jackkimmins/Jindium2</RepositoryUrl>
+    <PackageTags>webserver;csharp;dotnet-core</PackageTags>
+    <PackageIcon>JindiumLogo.png</PackageIcon>
+    <PackageLicenseExpression> Apache-2.0</PackageLicenseExpression>
+    <Description>A server-side web platform designed for the creation of modern web-based applications using C#. It was designed to enable developers to build extremely fast and dynamic websites, applications, and API services.</Description>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <PackageReleaseNotes>Beta Version of Jindium2</PackageReleaseNotes>
+    <AssemblyVersion>2.0.1</AssemblyVersion>
+    <FileVersion>2.0.1</FileVersion>
+    <Version>2.0.1</Version>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\JindiumLogo.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
