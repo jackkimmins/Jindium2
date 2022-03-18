@@ -20,9 +20,28 @@ class Program
                 return;
             }
 
-            ctx.Session.Add("demo", "Hello world!");
+            ctx.Session.AddKeyValue("demo", "Hello world!");
 
             await ctx.Send("This is a session demo page.");
+        });
+
+        server.ServerRoutes.AddStaticRoute("/counter", Method.GET, async (ctx) => {
+            int count = 0;
+
+            if (ctx.Session.ContainsKey("count"))
+            {
+                count = Convert.ToInt32(ctx.Session["count"]);
+            }
+            else
+            {
+                ctx.Session.Add("count", count.ToString());
+            }
+
+            count++;
+
+            ctx.Session["count"] = count.ToString();
+
+            await ctx.Send("You have visited this page " + count.ToString() + " times.");
         });
 
         server.ServerRoutes.AddStaticRoute("/auth", Method.POST, AuthRoute);

@@ -9,11 +9,12 @@ namespace Jindium
 {
     public class SessionData : Dictionary<string, string>
     {
-        private readonly Dictionary<string, string> _rows = new Dictionary<string, string>();
-
-        public void Add(KeyValuePair<string, string> row)
+        public void AddKeyValue(string key, string value)
         {
-            _rows.Add(row.Key, row.Value);
+            if (ContainsKey(key))
+                this[key] = value;
+            else
+                Add(key, value);
         }
     }
 
