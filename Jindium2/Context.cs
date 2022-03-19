@@ -21,8 +21,6 @@ namespace Jindium
             {
                 foreach (Match replaceletMatch in new Regex("<" + replacelet.Key + "(?=\\s)(?!(?:[^>\"\\']|\"[^\"]*\"|\\'[^\\']*\\')*?(?<=\\s)(?:term|range)\\s*=)(?!\\s*/?>)\\s+(?:\".*?\"|\\'.*?\\'|[^>]*?)+>").Matches(content))
                 {
-                    Console.WriteLine("Found replacelet: " + replaceletMatch.Value);
-
                     Dictionary<string, string> ReplaceletArgs = new Dictionary<string, string>();
 
                     foreach (Match match in new Regex("(\\w+)=[\"']?((?:.(?![\"']?\\s+(?:\\S+)=|\\s*\\/?[>\"']))+.)[\"']?").Matches(replaceletMatch.Value))
@@ -41,6 +39,12 @@ namespace Jindium
         {
             data = ApplyReplacelets(data);
             await CreateResponse(Encoding.UTF8.GetBytes(data), statusCode, contentType);
+        }
+
+        public async Task Redirect(string url)
+        {
+            await CreateResponse(Encoding.UTF8.GetBytes(""), 302, "text/html");
+            res.Redirect(url);
         }
 
         public async Task ErrorPage(string message, int statusCode = 500)
