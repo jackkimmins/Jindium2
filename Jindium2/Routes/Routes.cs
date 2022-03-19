@@ -58,6 +58,11 @@ public class Routes
                 string filePath = file.Replace(JindiumContentPath, "#=#");
                 filePath = path + "/" + filePath.Substring(filePath.IndexOf("#=#\\") + 4).Replace("\\", "/");
 
+                if (filePath.EndsWith("/index.html"))
+                {
+                    filePath = filePath.Substring(0, filePath.Length - "/index.html".Length);
+                }
+
                 AddRoute(new Route(filePath, Method.GET, RouteType.Content), (ctx) =>
                 {
                     string fullFilePath = System.IO.Path.GetFullPath(file);
