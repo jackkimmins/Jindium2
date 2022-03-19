@@ -30,7 +30,7 @@ public class Routes
         AddRoute(new Route(path, method), action);
     }
 
-    public void AddContentRoute(string path, string contentPath)
+    public void AddContentRoute(string path, string contentPath, bool mustBeAuth = false)
     {
         contentPath = contentPath.Replace("/", "\\");
         contentPath = System.IO.Path.GetFullPath(JindiumContentPath + contentPath);
@@ -46,6 +46,8 @@ public class Routes
 
                 AddRoute(new Route(filePath + "/" + fileName, Method.GET), (ctx) =>
                 {
+                    ctx.MustBeAuth = mustBeAuth;
+
                     if (!System.IO.File.Exists(fileName))
                     {
                         return ctx.ErrorPage(path + " does not exist.", 405);

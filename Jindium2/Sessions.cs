@@ -16,6 +16,13 @@ namespace Jindium
             else
                 Add(key, value);
         }
+
+        public string GetValue(string key)
+        {
+            return ContainsKey(key) ? this[key] : "";
+        }
+
+        public bool IsAuthenticated { get; set; } = false;
     }
 
     public class Sessions

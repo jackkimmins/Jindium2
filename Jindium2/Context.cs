@@ -14,6 +14,8 @@ namespace Jindium
         public HttpListenerResponse res { get; private set; } = null;
         public Replacelets LocalReplacelets { get; private set; }
         public SessionData Session { get; set; }
+        public string? ContentType { get; set; } = null;
+        public bool MustBeAuth { get; set; } = false;
 
         private string ApplyReplacelets(string content)
         {
@@ -35,10 +37,16 @@ namespace Jindium
             return content;
         }
 
-        public async Task Send(string data, int statusCode = 200, string contentType = "text/html")
+        public async Task Send(string data, int statusCode = 200, string contentType = "text/html", bool AuthOverride = false)
         {
+            if (MustBeAuth && Session.IsAuthenticated == false && AuthOverride == false)
+            {
+                await ErrorPage("You are not authorized to view this page.", 401);
+                return;
+            }
+
             data = ApplyReplacelets(data);
-            await CreateResponse(Encoding.UTF8.GetBytes(data), statusCode, contentType);
+            await CreateResponse(Encoding.UTF8.GetBytes(data), statusCode, ContentType == null ? contentType : ContentType);
         }
 
         public async Task Redirect(string url)
@@ -49,7 +57,7 @@ namespace Jindium
 
         public async Task ErrorPage(string message, int statusCode = 500)
         {
-            await Send(StaticResp.ErrorTemplate("test", statusCode.ToString()), statusCode, "text/html");
+            await Send(StaticResp.ErrorTemplate("test", statusCode.ToString()), statusCode, "text/html", true);
         }
 
         public async Task<Dictionary<string, string>> GetRequestPostData()
