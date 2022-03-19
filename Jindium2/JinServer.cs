@@ -121,7 +121,7 @@ public partial class JinServer
 
         while (true)
         {
-            if (ExecuteCommand(Console.ReadLine()))
+            if (ExecuteCommand(Console.ReadLine() ?? ""))
                 break;
         }
 

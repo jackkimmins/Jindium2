@@ -47,7 +47,7 @@ namespace Jindium
                     {
                         foreach (var session in Sessions.SessionsData)
                         {
-                            cText.WriteLine("- Session ID: " + session.Key, "CMD", ConsoleColor.Blue);
+                            cText.WriteLine("- Session ID: " + session.Key + " | Is Authenticated: " + session.Value.IsAuthenticated, "CMD", ConsoleColor.Blue);
                             cText.WriteLine("- Session Data: ", "CMD", ConsoleColor.Blue);
 
                             if (session.Value.Count > 0)
@@ -63,6 +63,29 @@ namespace Jindium
                             }
 
                             Console.WriteLine();
+                        }
+                    }
+                    break;
+                case "routes":
+                    cText.WriteLine("Available Jindium Routes:", "CMD", ConsoleColor.Blue);
+                    if (ServerRoutes.RoutesDictionary.Count == 0)
+                    {
+                        cText.WriteLine("- No Routes", "CMD", ConsoleColor.Blue);
+                    }
+                    else
+                    {
+                        var routes = ServerRoutes.RoutesDictionary.OrderBy(x => x.Key.Type).ThenBy(x => x.Key.Method);
+
+                        foreach (var route in routes)
+                        {
+                            var colour = ConsoleColor.White;
+
+                            if (route.Key.Type == RouteType.Static)
+                                colour = ConsoleColor.Cyan;
+                            else if (route.Key.Type == RouteType.Content)
+                                colour = ConsoleColor.Yellow;
+
+                            cText.WriteLine("- " + route.Key.Method + "_" + route.Key.Type.ToString().ToUpper() + " " + route.Key.Path, "CMD", colour);
                         }
                     }
                     break;
