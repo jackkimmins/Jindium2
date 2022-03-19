@@ -14,7 +14,7 @@ public partial class JinServer
     public bool IsServerRunning { get; private set; } = false;
     private bool CompletedShutdown = false;
 
-    public JinServer(string address, bool addJindiumPreFabs = false)
+    public JinServer(string address)
     {
         if (String.IsNullOrEmpty(address)) address = "http://localhost:5000/";
 
@@ -24,11 +24,12 @@ public partial class JinServer
         {
             return ctx.Send(StaticResp.WelcomeTemplate("Jindium"));
         });
+    }
 
-        if (addJindiumPreFabs)
-        {
-            ServerRoutes.AddStaticRoute("/logout", Method.GET, PreFabs.Logout);
-        }
+    //Adds the Jindium PreFabs to the JinServer. /logout etc
+    public void AddPreFabs()
+    {
+        ServerRoutes.AddStaticRoute("/logout", Method.GET, PreFabs.Logout);
     }
 
     private async Task HandleIncomingConnections()

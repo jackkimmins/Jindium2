@@ -56,7 +56,7 @@ public class Routes
             foreach (string file in AllFiles)
             {
                 string filePath = file.Replace(JindiumContentPath, "#=#");
-                filePath = path + "/" + filePath.Substring(filePath.IndexOf("#=#\\") + 4).Replace("\\", "/");
+                filePath = (path == "/" ? "/" : path + "/") + filePath.Substring(filePath.IndexOf("#=#\\") + 4).Replace("\\", "/");
 
                 if (filePath.EndsWith("/index.html"))
                 {

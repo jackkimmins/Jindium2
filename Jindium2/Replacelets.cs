@@ -8,9 +8,9 @@ namespace Jindium;
 
 public class Replacelets
 {
-    public Dictionary<string, Func<Dictionary<string, string>, string>> ReplaceletDictionary { get; private set; } = new Dictionary<string, Func<Dictionary<string, string>, string>>();
+    public Dictionary<string, Func<Context, Dictionary<string, string>, string>> ReplaceletDictionary { get; private set; } = new Dictionary<string, Func<Context, Dictionary<string, string>, string>>();
 
-    public void AddReplacelet(string name, Func<Dictionary<string, string>, string> action)
+    public void AddReplacelet(string name, Func<Context, Dictionary<string, string>, string> action)
     {
         if (ReplaceletDictionary.ContainsKey(name))
         {
