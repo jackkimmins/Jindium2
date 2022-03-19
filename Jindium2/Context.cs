@@ -69,8 +69,8 @@ namespace Jindium
 
         public async Task Redirect(string url)
         {
+            res.RedirectLocation = url;
             await CreateResponse(Encoding.UTF8.GetBytes(""), 302, "text/html");
-            res.Redirect(url);
         }
 
         public async Task ErrorPage(string message, int statusCode = 500)
