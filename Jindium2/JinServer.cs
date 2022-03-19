@@ -1,15 +1,18 @@
 ﻿using System.Net;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Jindium;
 
-public class JinServer
+public partial class JinServer
 {
     private HttpListener listener = new HttpListener();
     public string Address { get; private set; }
     public Routes ServerRoutes { get; private set; } = new Routes();
     public Replacelets ServerReplacelets { get; private set; } = new Replacelets();
     public Sessions Sessions { get; set; } = new Sessions();
+    public bool IsServerRunning { get; private set; } = false;
+    private bool CompletedShutdown = false;
 
     public JinServer(string address)
     {
@@ -25,7 +28,7 @@ public class JinServer
 
     private async Task HandleIncomingConnections()
     {
-        while (true)
+        while (IsServerRunning)
         {
             HttpListenerContext ctx = await listener.GetContextAsync();
 
@@ -80,6 +83,8 @@ public class JinServer
 
             context.res.Close();
         }
+
+        CompletedShutdown = true;
     }
 
     public void Start()
@@ -99,18 +104,38 @@ public class JinServer
         }
 
         cText.WriteLine($"Jindium is Online! ({Address})", "INFO", ConsoleColor.Green);
+        IsServerRunning = true;
 
         //Handle incoming connections.
         try
         {
-            Task listenTask = HandleIncomingConnections();
-            listenTask.GetAwaiter().GetResult();
+            System.Threading.ThreadPool.QueueUserWorkItem(async (o) =>
+            {
+                await HandleIncomingConnections();
+            });
         }
         catch (Exception ex)
         {
             cText.WriteLine($"An error occured while handling incoming connections: {ex.Message}", "ERR", ConsoleColor.Red);
         }
-        
+
+        while (true)
+        {
+            if (ExecuteCommand(Console.ReadLine()))
+                break;
+        }
+
+        IsServerRunning = false;
+
+        cText.WriteLine($"Jindium is shutting down...", "INFO", ConsoleColor.Green);
+
+        while (!CompletedShutdown)
+        {
+            System.Threading.Thread.Sleep(100);
+        }
+
+        cText.WriteLine($"Jindium is Offline!", "INFO", ConsoleColor.Red);
+
         listener.Close();
     }
 }

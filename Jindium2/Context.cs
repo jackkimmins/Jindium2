@@ -49,6 +49,24 @@ namespace Jindium
             await CreateResponse(Encoding.UTF8.GetBytes(data), statusCode, ContentType == null ? contentType : ContentType);
         }
 
+        public async Task SendFile(byte[] data, int statusCode = 200, string contentType = "text/html", bool AuthOverride = false)
+        {
+            if (MustBeAuth && Session.IsAuthenticated == false && AuthOverride == false)
+            {
+                await ErrorPage("You are not authorized to view this page.", 401);
+                return;
+            }
+
+            contentType = ContentType == null ? contentType : ContentType;
+
+            if (contentType.StartsWith("text/"))
+            {
+                data = Encoding.UTF8.GetBytes(ApplyReplacelets(Encoding.UTF8.GetString(data)));
+            }
+
+            await CreateResponse(data, statusCode, contentType);
+        }
+
         public async Task Redirect(string url)
         {
             await CreateResponse(Encoding.UTF8.GetBytes(""), 302, "text/html");
@@ -57,7 +75,7 @@ namespace Jindium
 
         public async Task ErrorPage(string message, int statusCode = 500)
         {
-            await Send(StaticResp.ErrorTemplate("test", statusCode.ToString()), statusCode, "text/html", true);
+            await CreateResponse(Encoding.UTF8.GetBytes(StaticResp.ErrorTemplate(message, "JindiumSiteNameChangeplease")), statusCode, "text/html");
         }
 
         public async Task<Dictionary<string, string>> GetRequestPostData()
@@ -107,6 +125,8 @@ namespace Jindium
         {
             res.StatusCode = statusCode;
             res.ContentType = contentType;
+            res.ContentEncoding = Encoding.UTF8;
+            res.ContentLength64 = data.Length;
 
             await AddCustomHeaders();
 

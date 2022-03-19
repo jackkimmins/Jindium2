@@ -38,37 +38,55 @@ public class Routes
         //Check if contentPath is a directory
         if (System.IO.Directory.Exists(contentPath))
         {
-            //Add a route for each file in the directory and subdirectories
-            foreach (string file in System.IO.Directory.GetFileSystemEntries(contentPath, "*", System.IO.SearchOption.AllDirectories))
-            {
-                string fileName = System.IO.Path.GetFileName(file);
-                string filePath = path + "/" + fileName;
+            List<string> AllFiles = new List<string>();
 
-                AddRoute(new Route(filePath + "/" + fileName, Method.GET), (ctx) =>
+            void ParsePath(string path)
+            {
+                AllFiles.AddRange(Directory.GetFiles(path));
+
+                foreach (string subdir in Directory.GetDirectories(path))
                 {
+                    ParsePath(subdir);
+                }
+            }
+
+            ParsePath(contentPath);
+
+            //Add a route for each file in the directory and subdirectories
+            foreach (string file in AllFiles)
+            {
+                string filePath = file.Replace(JindiumContentPath, "#=#");
+                filePath = path + "/" + filePath.Substring(filePath.IndexOf("#=#\\") + 4).Replace("\\", "/");
+
+                AddRoute(new Route(filePath, Method.GET, RouteType.Content), (ctx) =>
+                {
+                    string fullFilePath = System.IO.Path.GetFullPath(file);
+
+                    string fileExtension = System.IO.Path.GetExtension(file);
+                    ctx.ContentType = Utilities.GetContentType(fileExtension);
+
                     ctx.MustBeAuth = mustBeAuth;
 
-                    if (!System.IO.File.Exists(fileName))
+                    if (!System.IO.File.Exists(fullFilePath))
                     {
+                        Console.WriteLine("Does not exitst: " + fullFilePath);
                         return ctx.ErrorPage(path + " does not exist.", 405);
                     }
 
-                    Console.WriteLine("Serving " + fileName);
-
-                    return ctx.Send(StaticResp.GetFileContent(file));
+                    return ctx.SendFile(StaticResp.GetFileContent(fullFilePath));
                 });
             }
         }
         else
         {
-            AddRoute(new Route(path, Method.GET), (ctx) =>
+            AddRoute(new Route(path, Method.GET, RouteType.Static), (ctx) =>
             {
                 if (!System.IO.File.Exists(contentPath))
                 {
                     return ctx.ErrorPage(path + " does not exist.", 404);
                 }
 
-                return ctx.Send(StaticResp.GetFileContent(contentPath));
+                return ctx.SendFile(StaticResp.GetFileContent(contentPath));
             });
         }
         
@@ -102,14 +120,22 @@ public enum Method
     POST
 }
 
+public enum RouteType
+{
+    Static,
+    Content
+}
+
 public struct Route
 {
-    public string Path;
-    public Method Method;
+    public string Path { get; private set; }
+    public Method Method { get; private set; }
+    public RouteType Type { get; private set; }
 
-    public Route(string path, Method method = Method.GET)
+    public Route(string path, Method method = Method.GET, RouteType type = RouteType.Static)
     {
         Path = path;
         Method = method;
+        Type = type;
     }
 }
