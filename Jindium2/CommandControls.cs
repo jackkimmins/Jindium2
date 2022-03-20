@@ -31,6 +31,20 @@ namespace Jindium
                     Console.Clear();
                     break;
                 case "status":
+                    cText.WriteLine("Jindium Server Status:", "CMD", ConsoleColor.Blue);
+                    cText.WriteLine("- Server Status: " + (IsServerRunning ? "Online" : "Offline"), "CMD", ConsoleColor.Blue);
+                    cText.WriteLine("- Server Address: " + Address, "CMD", ConsoleColor.Blue);
+                    cText.WriteLine("- Request Count: " + RequestsCount, "CMD", ConsoleColor.Blue);
+                    Console.WriteLine();
+
+                    cText.WriteLine("-=- Server Cache -=-", "CMD", ConsoleColor.Blue);
+                    cText.WriteLine("- Cache Size: " + Utilities.BytesToFormattedString(ServerRoutes.GetContentCacheSize()), "CMD", ConsoleColor.Blue);
+                    cText.WriteLine("- Cache Route Entries: " + ServerRoutes.ListContentCache().Count, "CMD", ConsoleColor.Blue);
+                    Console.WriteLine();
+
+                    cText.WriteLine("-=- Sessions -=-", "CMD", ConsoleColor.Blue);
+                    cText.WriteLine("- Active Sessions: " + ServerRoutes.ListContentCache().Count, "CMD", ConsoleColor.Blue);
+                    cText.WriteLine("- Sessions Enabled: " + (Sessions.SessionsActive ? "Yes" : "No"), "CMD", ConsoleColor.Blue);
                     break;
                 case "sessions":
                     if (Sessions.SessionsActive == false)
@@ -94,10 +108,17 @@ namespace Jindium
                     Logging = !Logging;
                     cText.WriteLine("Toggled logging to " + (Logging ? "On" : "Off"), "CMD", ConsoleColor.Blue);
                     break;
+                case "cache-reset":
+                    string cacheSize = Utilities.BytesToFormattedString(ServerRoutes.GetContentCacheSize());
+                    ServerRoutes.ClearContentCache();
+                    cText.WriteLine("Cleared " + cacheSize + " of content cache.", "CMD", ConsoleColor.Blue);
+                    break;
                 default:
                     cText.WriteLine("Please enter a valid command. Type 'help' for help.", "CMD", ConsoleColor.Blue);
                     break;
             }
+
+            Console.WriteLine();
 
             return false;
         }

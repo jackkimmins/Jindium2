@@ -14,6 +14,7 @@ public partial class JinServer
     public bool IsServerRunning { get; private set; } = false;
     private bool CompletedShutdown = false;
     public bool Logging { get; private set; } = false;
+    public int RequestsCount { get; private set; }
 
     public JinServer(string address)
     {
@@ -38,6 +39,8 @@ public partial class JinServer
         while (IsServerRunning)
         {
             HttpListenerContext ctx = await listener.GetContextAsync();
+
+            RequestsCount++;
 
             Context context = new Context(ctx.Request, ctx.Response, ServerReplacelets);
 
@@ -80,12 +83,14 @@ public partial class JinServer
             if (route.Key.Path == path && route.Key.Method == (Method)Enum.Parse(typeof(Method), method))
             {
                 await route.Value(context);
+
                 if (Logging)
                     cText.WriteLine($"{method} {path}", "REQ", ConsoleColor.Green);
             }
             else
             {
                 await context.ErrorPage("This page does not exist.", 404);
+
                 if (Logging)
                     cText.WriteLine($"{method} {path}", "REQ", ConsoleColor.Red);
             }

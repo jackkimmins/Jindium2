@@ -10,6 +10,28 @@ public class Routes
 {
     public string JindiumContentPath { get; set; }
     public Dictionary<Route, Func<Context, Task>> RoutesDictionary { get; private set; } = null;
+    private Dictionary<string, byte[]> ContentCache = new Dictionary<string, byte[]>();
+    public void ClearContentCache()
+    {
+        ContentCache.Clear();
+    }
+    public List<string> ListContentCache()
+    {
+        return ContentCache.Keys.ToList();
+    }
+
+    //Get the total size of the content cache in bytes
+    public long GetContentCacheSize()
+    {
+        long size = 0;
+
+        foreach (KeyValuePair<string, byte[]> entry in ContentCache)
+        {
+            size += entry.Value.Length;
+        }
+
+        return size;
+    }
 
     public void AddRoute(Route route, Func<Context, Task> action)
     {
@@ -78,7 +100,12 @@ public class Routes
                         return ctx.ErrorPage(path + " does not exist.", 405);
                     }
 
-                    return ctx.SendFile(StaticResp.GetFileContent(fullFilePath));
+                    if (!ContentCache.ContainsKey(fullFilePath))
+                    {
+                        ContentCache.Add(fullFilePath, StaticResp.GetFileContent(fullFilePath));
+                    }
+
+                    return ctx.SendFile(ContentCache[fullFilePath]);
                 });
             }
         }
@@ -91,7 +118,12 @@ public class Routes
                     return ctx.ErrorPage(path + " does not exist.", 404);
                 }
 
-                return ctx.SendFile(StaticResp.GetFileContent(contentPath));
+                if (!ContentCache.ContainsKey(contentPath))
+                {
+                    ContentCache.Add(contentPath, StaticResp.GetFileContent(contentPath));
+                }
+
+                return ctx.SendFile(ContentCache[contentPath]);
             });
         }
         
