@@ -13,6 +13,7 @@ public partial class JinServer
     public Sessions Sessions { get; set; } = new Sessions();
     public bool IsServerRunning { get; private set; } = false;
     private bool CompletedShutdown = false;
+    public bool Logging { get; private set; } = false;
 
     public JinServer(string address)
     {
@@ -79,12 +80,14 @@ public partial class JinServer
             if (route.Key.Path == path && route.Key.Method == (Method)Enum.Parse(typeof(Method), method))
             {
                 await route.Value(context);
-                cText.WriteLine($"{method} {path}", "REQ", ConsoleColor.Green);
+                if (Logging)
+                    cText.WriteLine($"{method} {path}", "REQ", ConsoleColor.Green);
             }
             else
             {
                 await context.ErrorPage("This page does not exist.", 404);
-                cText.WriteLine($"{method} {path}", "REQ", ConsoleColor.Red);
+                if (Logging)
+                    cText.WriteLine($"{method} {path}", "REQ", ConsoleColor.Red);
             }
 
             context.res.Close();

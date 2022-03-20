@@ -21,6 +21,7 @@ namespace Jindium
                     cText.WriteLine("clear - Clears the console", "CMD", ConsoleColor.Blue);
                     cText.WriteLine("stop - Stops the server", "CMD", ConsoleColor.Blue);
                     cText.WriteLine("status - Shows the server status", "CMD", ConsoleColor.Blue);
+                    cText.WriteLine("logging - Toggles logging mode", "CMD", ConsoleColor.Blue);
                     cText.WriteLine("sessions - Shows the sessions", "CMD", ConsoleColor.Blue);
                     break;
                 case "stop":
@@ -88,6 +89,10 @@ namespace Jindium
                             cText.WriteLine("- " + route.Key.Method + "_" + route.Key.Type.ToString().ToUpper() + " " + route.Key.Path, "CMD", colour);
                         }
                     }
+                    break;
+                case "logging":
+                    Logging = !Logging;
+                    cText.WriteLine("Toggled logging to " + (Logging ? "On" : "Off"), "CMD", ConsoleColor.Blue);
                     break;
                 default:
                     cText.WriteLine("Please enter a valid command. Type 'help' for help.", "CMD", ConsoleColor.Blue);
