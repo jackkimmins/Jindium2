@@ -13,7 +13,7 @@ class Program
         server.ServerRoutes.AddStaticRoute("/", Method.GET, DefaultRoute);
         server.ServerRoutes.AddStaticRoute("/test", Method.GET, DefaultRoute);
 
-        server.ServerRoutes.AddStaticRoute("/test", Method.GET, async (ctx) => {
+        server.ServerRoutes.AddStaticRoute("/test2", Method.GET, async (ctx) => {
             if (ctx.Session.ContainsKey("demo"))
             {
                 await ctx.Send("Session found: " + ctx.Session["demo"]);
@@ -46,16 +46,23 @@ class Program
 
         server.ServerRoutes.AddStaticRoute("/auth", Method.POST, AuthRoute);
 
+        server.ServerRoutes.AddStaticRoute("/postTest", Method.POST, async (ctx) =>
+        {
+            var data = await ctx.GetRequestPostData();
+
+            Console.WriteLine(data);
+        });
+
         server.ServerRoutes.AddContentRoute("/jack", "/test.html");
         server.ServerRoutes.AddContentRoute("/login", "/login.html");
-        server.ServerRoutes.AddContentRoute("/george", "/george");
+        server.ServerRoutes.AddContentRoute("/george", "/");
 
-        server.ServerReplacelets.AddReplacelet("HelloWorld", (args) =>
+        server.ServerReplacelets.AddReplacelet("HelloWorld", (ctx, args) =>
         {
             return "Hello, how are you doing today " + args["name"] + "?";
         });
 
-        server.ServerReplacelets.AddReplacelet("DateTime", (args) =>
+        server.ServerReplacelets.AddReplacelet("DateTime", (ctx, args) =>
         {
             return DateTime.Now.ToString();
         });

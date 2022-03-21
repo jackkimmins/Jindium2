@@ -78,26 +78,32 @@ namespace Jindium
             await CreateResponse(Encoding.UTF8.GetBytes(StaticResp.ErrorTemplate(message, "JindiumSiteNameChangeplease")), statusCode, "text/html");
         }
 
-        public async Task<Dictionary<string, string>> GetRequestPostData()
+        public Task<Dictionary<string, string>> GetRequestPostData()
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
 
             if (req.HasEntityBody)
             {
-                byte[] buffer = new byte[req.ContentLength64];
-                await req.InputStream.ReadAsync(buffer, 0, buffer.Length);
-                string body = Encoding.UTF8.GetString(buffer);
-
-                string[] pairs = body.Split('&');
-
-                foreach (string pair in pairs)
+                //Read the text using the StreamReader.
+                using (System.IO.StreamReader reader = new System.IO.StreamReader(req.InputStream, req.ContentEncoding))
                 {
-                    string[] keyValue = pair.Split('=');
-                    data.Add(keyValue[0], keyValue[1]);
+                    string body = reader.ReadToEnd();
+
+                    string[] pairs = body.Split('&');
+
+                    foreach (string pair in pairs)
+                    {
+                        string[] keyValue = pair.Split('=');
+
+                        if (keyValue.Length == 2)
+                        {
+                            data.Add(System.Web.HttpUtility.UrlDecode(keyValue[0]), System.Web.HttpUtility.UrlDecode(keyValue[1]));
+                        }
+                    }
                 }
             }
 
-            return data;
+            return Task.FromResult(data);
         }
 
         public async Task<bool> IsPostKeySet(params string[] keys)
