@@ -21,7 +21,7 @@ namespace Jindium
         {
             foreach (KeyValuePair<string, Func<Context, Dictionary<string, string>, string>> replacelet in LocalReplacelets.ReplaceletDictionary)
             {
-                foreach (Match replaceletMatch in new Regex("<" + replacelet.Key + "(?=\\s)(?!(?:[^>\"\\']|\"[^\"]*\"|\\'[^\\']*\\')*?(?<=\\s)(?:term|range)\\s*=)(?!\\s*/?>)\\s+(?:\".*?\"|\\'.*?\\'|[^>]*?)+>").Matches(content))
+                foreach (Match replaceletMatch in new Regex("<" + replacelet.Key.ToLower() + "(?=\\s)(?!(?:[^>\"\\']|\"[^\"]*\"|\\'[^\\']*\\')*?(?<=\\s)(?:term|range)\\s*=)(?!\\s*/?>)\\s+(?:\".*?\"|\\'.*?\\'|[^>]*?)+>").Matches(content))
                 {
                     Dictionary<string, string> ReplaceletArgs = new Dictionary<string, string>();
 

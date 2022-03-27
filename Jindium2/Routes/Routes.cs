@@ -54,7 +54,7 @@ public class Routes
 
     public void AddContentRoute(string path, string contentPath, bool mustBeAuth = false)
     {
-        contentPath = contentPath.Replace("/", "\\");
+        //contentPath = contentPath.Replace("/", "\\");
         contentPath = System.IO.Path.GetFullPath(JindiumContentPath + contentPath);
 
         //Check if contentPath is a directory
@@ -78,7 +78,7 @@ public class Routes
             foreach (string file in AllFiles)
             {
                 string filePath = file.Replace(JindiumContentPath, "#=#");
-                filePath = (path == "/" ? "/" : path + "/") + filePath.Substring(filePath.IndexOf("#=#\\") + 4).Replace("\\", "/");
+                filePath = (path == "/" ? "/" : path + "/") + filePath.Substring(filePath.Replace("\\", "/").IndexOf("#=#/") + 4).Replace("\\", "/");
 
                 if (filePath.EndsWith("/index.html"))
                 {
@@ -88,8 +88,8 @@ public class Routes
                 AddRoute(new Route(filePath, Method.GET, RouteType.Content), (ctx) =>
                 {
                     string fullFilePath = System.IO.Path.GetFullPath(file);
-
                     string fileExtension = System.IO.Path.GetExtension(file);
+
                     ctx.ContentType = Utilities.GetContentType(fileExtension);
 
                     ctx.MustBeAuth = mustBeAuth;
@@ -102,7 +102,7 @@ public class Routes
 
                     if (!ContentCache.ContainsKey(fullFilePath))
                     {
-                        ContentCache.Add(fullFilePath, StaticResp.GetFileContent(fullFilePath));
+                        ContentCache.Add(fullFilePath, StaticResp.GetFileContent(fullFilePath, ctx.ContentType, true));
                     }
 
                     return ctx.SendFile(ContentCache[fullFilePath]);
@@ -115,12 +115,13 @@ public class Routes
             {
                 if (!System.IO.File.Exists(contentPath))
                 {
+                    cText.WriteLine(contentPath + " does not exist!", "ERR", ConsoleColor.Red);
                     return ctx.ErrorPage(path + " does not exist.", 404);
                 }
 
                 if (!ContentCache.ContainsKey(contentPath))
                 {
-                    ContentCache.Add(contentPath, StaticResp.GetFileContent(contentPath));
+                    ContentCache.Add(contentPath, StaticResp.GetFileContent(contentPath, Utilities.GetContentType(System.IO.Path.GetExtension(contentPath)), true));
                 }
 
                 return ctx.SendFile(ContentCache[contentPath]);

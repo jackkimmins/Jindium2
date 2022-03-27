@@ -8,7 +8,7 @@ public partial class JinServer
 {
     private HttpListener listener = new HttpListener();
     public string Address { get; private set; }
-    public Routes ServerRoutes { get; private set; } = new Routes();
+    public Routes ServerRoutes { get; private set; } = new Routes("JindiumSite");
     public Replacelets ServerReplacelets { get; private set; } = new Replacelets();
     public Sessions Sessions { get; set; } = new Sessions();
     public bool IsServerRunning { get; private set; } = false;
