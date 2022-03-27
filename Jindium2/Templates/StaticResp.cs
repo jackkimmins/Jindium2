@@ -55,9 +55,13 @@ public static class StaticResp
 
                 string content = Encoding.UTF8.GetString(fileContent);
 
+                HtmlMinificationSettings settings = new HtmlMinificationSettings();
+                settings.PreserveCase = true;
+                settings.EmptyTagRenderMode = HtmlEmptyTagRenderMode.SpaceAndSlash;
+
                 if (contentType == "text/html")
                 {
-                    var htmlMinifier = new HtmlMinifier();
+                    var htmlMinifier = new HtmlMinifier(settings);
                     return Encoding.UTF8.GetBytes(FileTopComment() + htmlMinifier.Minify(content).MinifiedContent);
                 }   
             }
