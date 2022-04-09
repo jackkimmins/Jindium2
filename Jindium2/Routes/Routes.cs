@@ -57,6 +57,8 @@ public class Routes
         //contentPath = contentPath.Replace("/", "\\");
         contentPath = System.IO.Path.GetFullPath(JindiumContentPath + contentPath);
 
+        Console.WriteLine(contentPath);
+
         //Check if contentPath is a directory
         if (System.IO.Directory.Exists(contentPath))
         {

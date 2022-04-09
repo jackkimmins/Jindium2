@@ -23,4 +23,9 @@ public class Replacelets
 
         ReplaceletDictionary.Add(name, action);
     }
+
+    public void AddReplacelet(string name, string replacement)
+    {
+        AddReplacelet(name, (context, args) => replacement);
+    }
 }
