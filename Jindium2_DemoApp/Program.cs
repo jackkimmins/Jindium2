@@ -25,6 +25,9 @@ class Program
             await ctx.Send("This is a session demo page.");
         });
 
+
+
+
         server.ServerRoutes.AddStaticRoute("/counter", Method.GET, async (ctx) => {
             int count = 0;
 
@@ -44,7 +47,13 @@ class Program
             await ctx.Send("You have visited this page " + count.ToString() + " times.");
         });
 
+
+
+
         server.ServerRoutes.AddStaticRoute("/auth", Method.POST, AuthRoute);
+
+
+
 
         server.ServerRoutes.AddStaticRoute("/postTest", Method.POST, async (ctx) =>
         {

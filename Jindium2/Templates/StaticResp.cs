@@ -90,7 +90,7 @@ public static class StaticResp
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            cText.WriteLine(e.Message, "ERR", ConsoleColor.Red);
         }
 
         return fileContent;

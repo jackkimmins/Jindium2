@@ -11,10 +11,14 @@ public class Routes
     public string JindiumContentPath { get; set; }
     public Dictionary<Route, Func<Context, Task>> RoutesDictionary { get; private set; } = null;
     private Dictionary<string, byte[]> ContentCache = new Dictionary<string, byte[]>();
+
+    public bool OutputOverwriteWarnings { get; set; } = true;
+
     public void ClearContentCache()
     {
         ContentCache.Clear();
     }
+
     public List<string> ListContentCache()
     {
         return ContentCache.Keys.ToList();
@@ -35,13 +39,12 @@ public class Routes
 
     public void AddRoute(Route route, Func<Context, Task> action)
     {
-        if (RoutesDictionary.ContainsKey(route))
+        //Check if the route's path is already taken using LINQ
+        if (RoutesDictionary.Keys.Where(x => x.Path == route.Path).Count() > 0)
         {
-            if (route.Path != "/")
+            if (route.Path != "/" && OutputOverwriteWarnings)
                 cText.WriteLine("A route with the same path and method already exists! (" + route.Path + ") Overwriting...");
-
-            RoutesDictionary[route] = action;
-            return;
+            RoutesDictionary.Remove(RoutesDictionary.Keys.Where(x => x.Path == route.Path).First());
         }
 
         RoutesDictionary.Add(route, action);
@@ -57,7 +60,7 @@ public class Routes
         //contentPath = contentPath.Replace("/", "\\");
         contentPath = System.IO.Path.GetFullPath(JindiumContentPath + contentPath);
 
-        Console.WriteLine(contentPath);
+        //Console.WriteLine(contentPath);
 
         //Check if contentPath is a directory
         if (System.IO.Directory.Exists(contentPath))
@@ -87,18 +90,19 @@ public class Routes
                     filePath = filePath.Substring(0, filePath.Length - "/index.html".Length);
                 }
 
+                if (string.IsNullOrEmpty(filePath)) filePath = "/";
+
                 AddRoute(new Route(filePath, Method.GET, RouteType.Content), (ctx) =>
                 {
                     string fullFilePath = System.IO.Path.GetFullPath(file);
                     string fileExtension = System.IO.Path.GetExtension(file);
 
                     ctx.ContentType = Utilities.GetContentType(fileExtension);
-
                     ctx.MustBeAuth = mustBeAuth;
 
                     if (!System.IO.File.Exists(fullFilePath))
                     {
-                        Console.WriteLine("Does not exitst: " + fullFilePath);
+                        cText.WriteLine("Does not exitst: " + fullFilePath, "ERR", ConsoleColor.Red);
                         return ctx.ErrorPage(path + " does not exist.", 405);
                     }
 

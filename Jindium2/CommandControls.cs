@@ -23,6 +23,7 @@ namespace Jindium
                     cText.WriteLine("status - Shows the server status", "CMD", ConsoleColor.Blue);
                     cText.WriteLine("logging - Toggles logging mode", "CMD", ConsoleColor.Blue);
                     cText.WriteLine("sessions - Shows the sessions", "CMD", ConsoleColor.Blue);
+                    cText.WriteLine("routes - Shows the server's routes", "CMD", ConsoleColor.Blue);
                     break;
                 case "stop":
                     IsServerRunning = false;

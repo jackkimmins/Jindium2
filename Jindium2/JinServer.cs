@@ -1,12 +1,14 @@
 ﻿using System.Net;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Jindium;
 
 public partial class JinServer
 {
     private HttpListener listener = new HttpListener();
+    public string ServerName { get; private set; } = "Jindium";
     public string Address { get; private set; }
     public Routes ServerRoutes { get; private set; } = new Routes("JindiumSite");
     public Replacelets ServerReplacelets { get; private set; } = new Replacelets();
@@ -16,16 +18,35 @@ public partial class JinServer
     public bool Logging { get; private set; } = false;
     public int RequestsCount { get; private set; }
 
-    public JinServer(string address)
+    public JinServer(string address = "")
     {
-        if (String.IsNullOrEmpty(address)) address = "http://localhost:5000/";
+        if (String.IsNullOrEmpty(address)) Address = "http://localhost:5000/";
 
-        Address = address;
+        LoadConfig();
 
         ServerRoutes.AddStaticRoute("/", Method.GET, (ctx) =>
         {
-            return ctx.Send(StaticResp.WelcomeTemplate("Jindium"));
+            return ctx.Send(StaticResp.WelcomeTemplate(ServerName));
         });
+    }
+
+    public void LoadConfig(string configPath = "config.json")
+    {
+        //Check if the config file exists
+        if (!File.Exists(configPath))
+        {
+            cText.WriteLine("Config file not found at " + configPath + ", creating new one...", "ERR", ConsoleColor.DarkGreen);
+
+            //Create a new config file
+            File.WriteAllText(configPath, JsonConvert.SerializeObject(new JinConfig(), Formatting.Indented));
+        }
+
+        //Load the config file
+        var config = JsonConvert.DeserializeObject<JinConfig>(File.ReadAllText(configPath)) ?? new JinConfig();
+
+        ServerName = config.ServerName;
+        Address = config.Address;
+        Logging = config.Logging;
     }
 
     //Adds the Jindium PreFabs to the JinServer. /logout etc
@@ -84,15 +105,13 @@ public partial class JinServer
             {
                 await route.Value(context);
 
-                if (Logging)
-                    cText.WriteLine($"{method} {path}", "REQ", ConsoleColor.Green);
+                if (Logging) cText.WriteLine($"{method} {path}", "REQ", ConsoleColor.Green);
             }
             else
             {
                 await context.ErrorPage("This page does not exist.", 404);
 
-                if (Logging)
-                    cText.WriteLine($"{method} {path}", "REQ", ConsoleColor.Red);
+                if (Logging) cText.WriteLine($"{method} {path}", "REQ", ConsoleColor.Red);
             }
 
             context.res.Close();
@@ -133,21 +152,12 @@ public partial class JinServer
             cText.WriteLine($"An error occured while handling incoming connections: {ex.Message}", "ERR", ConsoleColor.Red);
         }
 
-        while (true)
-        {
-            if (ExecuteCommand(Console.ReadLine() ?? ""))
-                break;
-        }
+        while (true) if (ExecuteCommand(Console.ReadLine() ?? "")) break;
 
         IsServerRunning = false;
 
         cText.WriteLine($"Jindium is shutting down...", "INFO", ConsoleColor.Green);
-
-        while (!CompletedShutdown)
-        {
-            System.Threading.Thread.Sleep(100);
-        }
-
+        while (!CompletedShutdown) System.Threading.Thread.Sleep(100);
         cText.WriteLine($"Jindium is Offline!", "INFO", ConsoleColor.Red);
 
         listener.Close();

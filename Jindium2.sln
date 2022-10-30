@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jindium2", "Jindium2\Jindiu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jindium2_DemoApp", "Jindium2_DemoApp\Jindium2_DemoApp.csproj", "{FFA47ADB-C307-45FF-9424-31FE073AE01D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JindiumHost", "JindiumHost\JindiumHost.csproj", "{AF270BB4-6437-48A1-B0C8-5A36B2E01B8D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JindiumHost", "JindiumHost\JindiumHost.csproj", "{AF270BB4-6437-48A1-B0C8-5A36B2E01B8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JindiumHost_DemoApp", "JindiumHost_DemoApp\JindiumHost_DemoApp.csproj", "{D10C8DA5-FCA6-4997-AD9B-FFAFE8D6F75E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JindiumHost_DemoApp", "JindiumHost_DemoApp\JindiumHost_DemoApp.csproj", "{D10C8DA5-FCA6-4997-AD9B-FFAFE8D6F75E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jindium2_NotesApp", "Jindium2_NotesApp\Jindium2_NotesApp.csproj", "{BF4E0950-1F38-41F3-B8AA-C564F4388C22}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{D10C8DA5-FCA6-4997-AD9B-FFAFE8D6F75E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D10C8DA5-FCA6-4997-AD9B-FFAFE8D6F75E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D10C8DA5-FCA6-4997-AD9B-FFAFE8D6F75E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF4E0950-1F38-41F3-B8AA-C564F4388C22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF4E0950-1F38-41F3-B8AA-C564F4388C22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF4E0950-1F38-41F3-B8AA-C564F4388C22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF4E0950-1F38-41F3-B8AA-C564F4388C22}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
