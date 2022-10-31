@@ -32,28 +32,19 @@ namespace Jindium
 
         private string GenerateSessionId()
         {
-            return Guid.NewGuid().ToString();
+            return Utilities.Sha256Hash(Guid.NewGuid().ToString());
         }
 
         public string StartSession()
         {
             string sessionId = GenerateSessionId();
-
-            if (!SessionsData.ContainsKey(sessionId))
-            {
-                SessionsData.Add(sessionId, new SessionData());
-            }
-
+            if (!SessionsData.ContainsKey(sessionId)) SessionsData.Add(sessionId, new SessionData());
             return sessionId;
         }
 
         public SessionData GetSession(string sessionId)
         {
-            if (SessionsData.ContainsKey(sessionId))
-            {
-                return SessionsData[sessionId];
-            }
-
+            if (SessionsData.ContainsKey(sessionId)) return SessionsData[sessionId];
             return new SessionData();
         }
     }

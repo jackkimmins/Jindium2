@@ -10,7 +10,7 @@ namespace Jindium
     {
         public bool ExecuteCommand(string? commandInput)
         {
-            if (!string.IsNullOrEmpty(commandInput))
+            if (string.IsNullOrEmpty(commandInput))
                 cText.WriteLine("Please enter a valid command. Type 'help' for help.", "CMD", ConsoleColor.Blue);
 
             switch (commandInput)
@@ -23,6 +23,7 @@ namespace Jindium
                     cText.WriteLine("status - Shows the server status", "CMD", ConsoleColor.Blue);
                     cText.WriteLine("logging - Toggles logging mode", "CMD", ConsoleColor.Blue);
                     cText.WriteLine("sessions - Shows the sessions", "CMD", ConsoleColor.Blue);
+                    cText.WriteLine("cache-reset - Reset the cache buffer", "CMD", ConsoleColor.Blue);
                     cText.WriteLine("routes - Shows the server's routes", "CMD", ConsoleColor.Blue);
                     break;
                 case "stop":
@@ -33,6 +34,9 @@ namespace Jindium
                     break;
                 case "status":
                     cText.WriteLine("Jindium Server Status:", "CMD", ConsoleColor.Blue);
+                    cText.WriteLine("- Jindium Version: " + JinServer.JindiumFrameworkVersion, "CMD", ConsoleColor.Blue);
+                    Console.WriteLine();
+
                     cText.WriteLine("- Server Status: " + (IsServerRunning ? "Online" : "Offline"), "CMD", ConsoleColor.Blue);
                     cText.WriteLine("- Server Address: " + Address, "CMD", ConsoleColor.Blue);
                     cText.WriteLine("- Request Count: " + RequestsCount, "CMD", ConsoleColor.Blue);

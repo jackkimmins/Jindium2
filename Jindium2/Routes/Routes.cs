@@ -14,6 +14,15 @@ public class Routes
 
     public bool OutputOverwriteWarnings { get; set; } = true;
 
+    public Routes(string contentPath = "JindiumSite")
+    {
+        JindiumContentPath = contentPath;
+
+        CheckForJindiumContentPath();
+
+        RoutesDictionary = new Dictionary<Route, Func<Context, Task>>();
+    }
+
     public void ClearContentCache()
     {
         ContentCache.Clear();
@@ -146,15 +155,6 @@ public class Routes
 
             System.IO.Directory.CreateDirectory(JindiumContentPath);
         }
-    }
-
-    public Routes(string contentPath = "JindiumSite")
-    {
-        JindiumContentPath = contentPath;
-
-        CheckForJindiumContentPath();
-
-        RoutesDictionary = new Dictionary<Route, Func<Context, Task>>();
     }
 }
 

@@ -26,10 +26,7 @@ namespace Jindium
                     Dictionary<string, string> ReplaceletArgs = new Dictionary<string, string>();
 
                     foreach (Match match in new Regex("(\\w+)=[\"']?((?:.(?![\"']?\\s+(?:\\S+)=|\\s*\\/?[>\"']))+.)[\"']?").Matches(replaceletMatch.Value))
-                    {
                         ReplaceletArgs.Add(match.Groups[1].Value, match.Groups[2].Value);
-                    }
-
                     content = content.Replace(replaceletMatch.Value, replacelet.Value(this, ReplaceletArgs));
                 }
             }

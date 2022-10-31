@@ -17,6 +17,7 @@ public partial class JinServer
     private bool CompletedShutdown = false;
     public bool Logging { get; private set; } = false;
     public int RequestsCount { get; private set; }
+    public static string JindiumFrameworkVersion { get; set; } = System.Reflection.Assembly.GetAssembly(typeof(JinServer))?.GetName().Version?.ToString() ?? "Unknown, but it is V2.1+";
 
     public JinServer(string address = "")
     {
@@ -35,7 +36,7 @@ public partial class JinServer
         //Check if the config file exists
         if (!File.Exists(configPath))
         {
-            cText.WriteLine("Config file not found at " + configPath + ", creating new one...", "ERR", ConsoleColor.DarkGreen);
+            cText.WriteLine("Config file not found at '" + Path.GetFullPath(configPath) + "', creating new one...", "ERR", ConsoleColor.DarkGreen);
 
             //Create a new config file
             File.WriteAllText(configPath, JsonConvert.SerializeObject(new JinConfig(), Formatting.Indented));

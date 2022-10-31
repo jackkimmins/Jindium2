@@ -23,7 +23,7 @@ public static class StaticResp
  _/ |
 |__/
 
- - Jindium Server - Version 2 -
+ - Jindium Server - Version " + JinServer.JindiumFrameworkVersion + $@" -
 
 -->
 ";
@@ -64,10 +64,7 @@ public static class StaticResp
 
             if (shouldMinify)
             {
-                if (contentType != "text/html" && contentType != "text/css" && contentType != "text/javascript")
-                {
-                    return fileContent;
-                }
+                if (contentType != "text/html" && contentType != "text/css" && contentType != "text/javascript") return fileContent;
 
                 string content = Encoding.UTF8.GetString(fileContent);
 
