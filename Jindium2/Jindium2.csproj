@@ -14,9 +14,9 @@
     <Description>A server-side web platform designed for the creation of modern web-based applications using C#. It was designed to enable developers to build extremely fast and dynamic websites, applications, and API services.</Description>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <PackageReleaseNotes>Beta Version of Jindium2</PackageReleaseNotes>
-    <AssemblyVersion>2.0.5</AssemblyVersion>
-    <FileVersion>2.0.5</FileVersion>
-    <Version>2.0.5-alpha</Version>
+    <AssemblyVersion>2.1.1</AssemblyVersion>
+    <FileVersion>2.1.1</FileVersion>
+    <Version>2.1.1-alpha</Version>
     <Copyright>© Copyright 2022 Jack Kimmins. All rights reserved.</Copyright>
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>

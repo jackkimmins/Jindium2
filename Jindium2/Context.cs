@@ -75,9 +75,9 @@ namespace Jindium
 
         public async Task ErrorPage(string message, int statusCode = 500)
         {
-            await CreateResponse(Encoding.UTF8.GetBytes(StaticResp.ErrorTemplate(message, "JindiumSiteNameChangeplease")), statusCode, "text/html");
+            await CreateResponse(Encoding.UTF8.GetBytes(StaticResp.ErrorTemplate(message, "Jindium Site Error")), statusCode, "text/html");
         }
-
+        
         public Task<Dictionary<string, string>> GetRequestPostData()
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
